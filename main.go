@@ -4,41 +4,11 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
+
+	"github.com/dotcs/project-euler-55/utils"
 )
 
-// strReverse takes a string and reverses this string, e.g.
-// "foobar" -> "raboof"
-func strReverse(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
-}
-
-// reverse takes an integer value, transforms it into a string
-// reverses the string and makes an integer out of it.
-// So the chain is: 312 -> "312" -> "213" -> 213
-func reverse(n *big.Int) *big.Int {
-	ns := n.String()
-	nsr := strReverse(ns)
-	xr := new(big.Int)
-	xr, ok := xr.SetString(nsr, 10)
-	if !ok {
-		panic(fmt.Sprintf("Conversion error to big.Int: %v", nsr))
-	}
-	return xr
-}
-
-func isPalindromNumber(val big.Int) bool {
-	h := reverse(&val)
-	return val.String() == h.String()
-}
-
-func run() {
-	N := 10000
-	maxDepth := 50
-
+func run(N, maxDepth int) {
 	lychrels := make([]int64, 0)
 
 	for n := 1; n <= N; n++ {
@@ -47,8 +17,8 @@ func run() {
 
 		for j := 0; j < maxDepth; j++ {
 			// Calculate if number + reverse(number) is palindrom
-			x = new(big.Int).Add(x, reverse(x))
-			isPalindromic := isPalindromNumber(*x)
+			x = new(big.Int).Add(x, utils.Reverse(x))
+			isPalindromic := utils.IsPalindromNumber(*x)
 			if isPalindromic {
 				break
 			}
@@ -66,5 +36,8 @@ func run() {
 }
 
 func main() {
-	run()
+	N := 10000
+	maxDepth := 50
+
+	run(N, maxDepth)
 }
