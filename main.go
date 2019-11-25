@@ -25,6 +25,8 @@ func run(N, maxDepth int64) {
 				break
 			}
 
+			// Assume that we have found lychrel number if after maxDepth
+			// iterations we stil have not found a palindrome.
 			if j == maxDepth-1 {
 				lychrels = append(lychrels, n)
 			}
