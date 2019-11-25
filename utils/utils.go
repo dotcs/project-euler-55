@@ -32,7 +32,7 @@ func Reverse(n *big.Int) *big.Int {
 // IsPalindromNumber returns true if the given number is the same
 // when being read from left to right and from right to left.
 // E.g. 121 is a palindrom number whereas 143 is not.
-func IsPalindromNumber(val big.Int) bool {
-	h := Reverse(&val)
-	return val.String() == h.String()
+func IsPalindromNumber(n *big.Int) bool {
+	h := Reverse(n)
+	return n.String() == h.String()
 }
