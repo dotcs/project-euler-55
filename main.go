@@ -11,7 +11,18 @@ import (
 	"github.com/dotcs/project-euler-55/utils"
 )
 
-func work(ch chan int64, wg *sync.WaitGroup, start, stop int64, maxDepth int64) {
+type lychrelList struct {
+	entries []int64
+	mux     sync.Mutex
+}
+
+func (ll *lychrelList) Append(n int64) {
+	ll.mux.Lock()
+	ll.entries = append(ll.entries, n)
+	ll.mux.Unlock()
+}
+
+func work(ll *lychrelList, wg *sync.WaitGroup, start, stop int64, maxDepth int64) {
 	defer wg.Done()
 
 	var n, j int64
@@ -30,15 +41,14 @@ func work(ch chan int64, wg *sync.WaitGroup, start, stop int64, maxDepth int64) 
 			// Assume that we have found lychrel number if after maxDepth
 			// iterations we stil have not found a palindrome.
 			if j == maxDepth-1 {
-				ch <- n
+				ll.Append(n)
 			}
 		}
 	}
 }
 
 func run(N, maxDepth, cores int64) {
-	lychrels := make([]int64, 0)
-	ch := make(chan int64)
+	lychrels := lychrelList{entries: make([]int64, 0)}
 
 	wg := &sync.WaitGroup{}
 	chunkSize := N / cores
@@ -50,21 +60,14 @@ func run(N, maxDepth, cores int64) {
 		start = i*chunkSize + 1
 		stop = (i + 1) * chunkSize
 		fmt.Printf("Start goroutine. Calculate numbers: %v to %v\n", start, stop)
-		go work(ch, wg, start, stop, maxDepth)
+		go work(&lychrels, wg, start, stop, maxDepth)
 	}
-	go (func() {
-		wg.Wait()
-		close(ch)
-	})()
-
-	for l := range ch {
-		lychrels = append(lychrels, l)
-	}
+	wg.Wait()
 
 	// for _, v := range lychrels {
 	// 	fmt.Printf("%v\n", v)
 	// }
-	fmt.Printf("Found %v lychrel numbers\n", len(lychrels))
+	fmt.Printf("Found %v lychrel numbers\n", len(lychrels.entries))
 }
 
 func main() {
