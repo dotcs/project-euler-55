@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/big"
+	"os"
 	"strconv"
 
 	"github.com/dotcs/project-euler-55/utils"
@@ -33,15 +34,21 @@ func run(N, maxDepth int64) {
 		}
 	}
 
-	for _, v := range lychrels {
-		fmt.Printf("%v\n", v)
-	}
+	// for _, v := range lychrels {
+	// 	fmt.Printf("%v\n", v)
+	// }
 	fmt.Printf("Found %v lychrel numbers\n", len(lychrels))
 }
 
 func main() {
-	var N int64 = 10000
-	var maxDepth int64 = 50
+	N, err := strconv.ParseInt(os.Args[1], 10, 64)
+	if err != nil {
+		panic("First argument missing: upper limit N")
+	}
+	maxDepth, err := strconv.ParseInt(os.Args[2], 10, 64)
+	if err != nil {
+		panic("Second argument missing: maxDepth")
+	}
 
 	run(N, maxDepth)
 }
