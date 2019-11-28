@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/big"
 	"os"
 	"runtime"
 	"strconv"
@@ -25,24 +24,10 @@ func (ll *lychrelList) Append(n int64) {
 func work(ll *lychrelList, wg *sync.WaitGroup, start, stop int64, maxDepth int64) {
 	defer wg.Done()
 
-	var n, j int64
+	var n int64
 	for n = start; n <= stop; n++ {
-		x := new(big.Int)
-		x.SetString(strconv.FormatInt(n, 10), 10)
-
-		for j = 0; j < maxDepth; j++ {
-			// Calculate if number + reverse(number) is palindrom
-			x = new(big.Int).Add(x, utils.Reverse(x))
-			isPalindromic := utils.IsPalindromNumber(x)
-			if isPalindromic {
-				break
-			}
-
-			// Assume that we have found lychrel number if after maxDepth
-			// iterations we stil have not found a palindrome.
-			if j == maxDepth-1 {
-				ll.Append(n)
-			}
+		if utils.IsLychrel(n, maxDepth) {
+			ll.Append(n)
 		}
 	}
 }
